@@ -1,0 +1,2 @@
+# logah
+Docker log aggregator
