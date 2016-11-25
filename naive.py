@@ -22,6 +22,11 @@ for line in r.iter_lines():
 
     if doc["Action"] == "start":
         cont = doc["id"]
+        try:
+            name = doc["Actor"]["Attributes"]["name"]
+        except ValueError:
+            name = cont[:12]
+
         if cont == own_id or cont.startswith(own_short_id):
             logging.debug("Skipping self %r", cont)
             continue
@@ -38,7 +43,8 @@ for line in r.iter_lines():
             except ValueError:
                 # Fall-back for old-school containers
                 doc = dict(message=line)
-
-            print(f"{cont}: {doc}")
+            
+            doc["container"] = name
+            print(doc)
 
         print(f"finished with {cont}")
