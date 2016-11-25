@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.DEBUG if os.environ.get("DEBUG") else logging.
 
 own_short_id = platform.node()
 own_id = next((line.strip().split("/")[-1] for line in open("/proc/self/cgroup") if line.startswith("1:name=")), None)
-logging.warn("%s", [own_short_id, own_id])
+logging.debug("own container id %s short id %s", own_id, own_short_id)
 
 s = requests_unixsocket.Session()
 r = s.get(f"{base_url}/events", stream=True)
@@ -31,9 +31,14 @@ for line in r.iter_lines():
         rr = s.get(f"{base_url}/containers/{cont}/logs?follow=1&stdout=1", stream=True)
         rr.raise_for_status()
         for line in rr.iter_lines():
-            logging.warn("log line %r", line)
-            # doc = json.loads(line)
-            # print(f"log entry {doc}")
-            pass
+            logging.debug("log line %r", line)
+            try:
+                # Good apps/containers should log in JSON
+                doc = json.loads(line)
+            except ValueError:
+                # Fall-back for old-school containers
+                doc = dict(message=line)
+
+            print(f"{cont}: {doc}")
 
         print(f"finished with {cont}")
