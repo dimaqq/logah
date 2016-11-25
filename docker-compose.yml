@@ -1,4 +1,4 @@
-logah:
+sync:
     build: .
     command: python naive.py
     environment:
@@ -6,6 +6,14 @@ logah:
     volumes:
         - /var/run/docker.sock:/var/run/docker.sock
         - ./naive.py:/naive.py
+async:
+    build: .
+    command: python async.py
+    environment:
+        - DEBUG
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ./async.py:/async.py
 test:
     build: .
     command: date
