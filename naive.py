@@ -42,9 +42,13 @@ for line in r.iter_lines():
                 doc = json.loads(line)
             except ValueError:
                 # Fall-back for old-school containers
+                try:
+                    line = line.decode("utf-8")
+                except UnicodeDecodeError:
+                    line = repr(line)
                 doc = dict(message=line)
             
             doc["container"] = name
-            print(doc)
+            print(json.dumps(doc))
 
         print(f"finished with {cont}")
