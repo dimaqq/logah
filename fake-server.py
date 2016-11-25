@@ -7,6 +7,9 @@ import logging
 import threading
 
 
+logging.basicConfig(level=logging.DEBUG if os.environ.get("DEBUG") else logging.INFO)
+
+
 class Connection(threading.Thread):
     def __init__(self, sock):
         super().__init__()
@@ -22,7 +25,7 @@ class Connection(threading.Thread):
                 if not line.strip():
                     break
 
-            print("HTTP 200 OK", end="\r\n", file=w)
+            print("HTTP/1.1 200 OK", end="\r\n", file=w)
             print("Foo: bar", end="\r\n", file=w)
             print("", end="\r\n", file=w)
             w.flush()
@@ -31,6 +34,7 @@ class Connection(threading.Thread):
                 time.sleep(0.3)
                 print(json.dumps(dict(fd=self.sock.fileno(), time=time.time())), file=w)
                 w.flush()
+                logging.debug("sent data on channel %s", self.sock.fileno())
 
 
 os.unlink("./test.sock")
