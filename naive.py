@@ -1,9 +1,12 @@
 #!/usr/bin/env python
+import os
 import json
 import logging
 import platform
 import requests_unixsocket
 base_url = "http+unix://%2Fvar%2Frun%2Fdocker.sock"
+
+logging.basicConfig(level=logging.DEBUG if os.environ.get("DEBUG") else logging.INFO)
 
 own_short_id = platform.node()
 own_id = next((line.strip().split("/")[-1] for line in open("/proc/self/cgroup") if line.startswith("1:name=")), None)
