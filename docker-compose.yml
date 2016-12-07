@@ -1,4 +1,4 @@
-logah:
+sync:
     build: .
     command: python naive.py
     environment:
