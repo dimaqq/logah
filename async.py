@@ -4,13 +4,10 @@ import asyncio
 import aiohttp
 
 own_short_id = platform.node()
-# own_id = next((line.strip().split("/")[-1] for line in open("/proc/self/cgroup") if line.startswith("1:name=")), None)
-own_id = None
-
-conn = aiohttp.UnixConnector(path="/var/run/docker.sock")
 
 
 async def events():
+    conn = aiohttp.UnixConnector(path="/var/run/docker.sock")
     async with aiohttp.ClientSession(connector=conn) as session:
         async with session.get("http://xx/events") as resp:
             async for line in resp.content:
@@ -22,13 +19,14 @@ async def events():
                     except ValueError:
                         name = cont[:12]
 
-                    if cont == own_id or cont.startswith(own_short_id):
+                    if cont.startswith(own_short_id):
                         continue
 
                     asyncio.ensure_future(logs(cont, name))
 
 
 async def logs(cont, name):
+    conn = aiohttp.UnixConnector(path="/var/run/docker.sock")
     async with aiohttp.ClientSession(connector=conn) as session:
         async with session.get(f"http://xx/containers/{cont}/logs?follow=1&stdout=1") as resp:
             async for line in resp.content:
