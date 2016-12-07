@@ -3,7 +3,7 @@ Docker log aggregator
 
 Start the aggregator
 ```
-docker-compose -f docker-compose.yml run --rm logah
+docker-compose -f docker-compose.yml run --rm sync
 ```
 
 Start a test container in another terminal
